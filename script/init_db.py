@@ -11,4 +11,17 @@ save_cursor.execute(
         );
         """
         )
+
+save_cursor.execute(
+        """
+        create table if not exists delivery_contract (
+          pk integer primary key not null
+          , external_id integer not null
+          , item text not null
+          , crew_size integer not null
+          , destination text not null
+        );
+        """
+        )
+
 connection.commit()
