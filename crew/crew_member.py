@@ -1,11 +1,18 @@
+from base_db import BaseDB
 import sqlite3
 
-class CrewMember:
+class CrewMember(BaseDB):
 
     def __init__(self, name):
         self._name = name
         self._pk = None
 
+
+    def _table_name(self):
+        return 'crew_member'
+
+    def _table_columns(self):
+        return ['name']
 
     @property
     def name(self):
@@ -55,21 +62,21 @@ class CrewMember:
         if not cursor:
             connection.commit()
 
-    def reload(self, cursor=None):
-        if cursor:
-            select_cursor = cursor
-        else:
-            connection = sqlite3.connect("test.db")
-            select_cursor = connection.cursor()
-
-        crew_member_reload = select_cursor.execute(
-                """
-                    select pk, name
-                    from crew_member
-                    where
-                      pk = ( ? )
-                      ;
-                """
-                , [self.pk]
-            ).fetchone()
-        self.name = crew_member_reload[1]
+    # def reload(self, cursor=None):
+    #     if cursor:
+    #         select_cursor = cursor
+    #     else:
+    #         connection = sqlite3.connect("test.db")
+    #         select_cursor = connection.cursor()
+    #
+    #     crew_member_reload = select_cursor.execute(
+    #             """
+    #                 select pk, name
+    #                 from crew_member
+    #                 where
+    #                   pk = ( ? )
+    #                   ;
+    #             """
+    #             , [self.pk]
+    #         ).fetchone()
+    #     self.name = crew_member_reload[1]

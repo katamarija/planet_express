@@ -1,4 +1,6 @@
-class DeliveryContract:
+from base_db import BaseDB
+
+class DeliveryContract(BaseDB):
 
     def __init__(self, external_id, item, crew_size, crew_conditions, destination):
         self._external_id = external_id
@@ -8,9 +10,19 @@ class DeliveryContract:
         self._destination = destination
         self._pk = None
 
+    def _table_name(self):
+        return 'delivery_contract'
+
+    def _table_columns(self):
+        return ['external_id', 'item', 'crew_size', 'destination']
+
     @property
     def item(self):
         return self._item
+
+    @item.setter
+    def item(self, item):
+        self._item = item
 
     @property
     def destination(self):
@@ -82,14 +94,17 @@ class DeliveryContract:
     #         connection = sqlite3.connect("test.db")
     #         select_cursor = connection.cursor()
     #
-    #     crew_member_reload = select_cursor.execute(
+    #     delivery_contract_reload = select_cursor.execute(
     #             """
-    #                 select pk, name
-    #                 from crew_member
+    #                 select pk, external_id, item, crew_size, destination
+    #                 from delivery_contract
     #                 where
     #                   pk = ( ? )
-    #                   ;
+    #                 ;
     #             """
     #             , [self.pk]
     #         ).fetchone()
-    #     self.name = crew_member_reload[1]
+    #     self._external_id = delivery_contract_reload[1]
+    #     self._item = delivery_contract_reload[2]
+    #     self._crew_size = delivery_contract_reload[3]
+    #     self._destination = delivery_contract_reload[4]
