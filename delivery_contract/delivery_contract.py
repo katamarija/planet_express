@@ -3,18 +3,18 @@ from base_db import BaseDB
 class DeliveryContract(BaseDB):
 
     def __init__(self, external_id, item, crew_size, crew_conditions, destination):
+        super().__init__()
         self._external_id = external_id
         self._item = item
         self._crew_size = crew_size
         self._crew_conditions = crew_conditions
         self._destination = destination
-        self._pk = None
 
     def _table_name(self):
         return 'delivery_contract'
 
-    def _table_columns(self):
-        return ['external_id', 'item', 'crew_size', 'destination']
+    def _model_attributes(self):
+        return {'external_id':'_external_id', 'item':'_item', 'crew_size':'_crew_size', 'destination':'_destination'}
 
     @property
     def item(self):
@@ -86,25 +86,3 @@ class DeliveryContract(BaseDB):
             self._pk = save_cursor.execute("SELECT last_insert_rowid();").fetchone()[0]
         if not cursor:
             connection.commit()
-
-    # def reload(self, cursor=None):
-    #     if cursor:
-    #         select_cursor = cursor
-    #     else:
-    #         connection = sqlite3.connect("test.db")
-    #         select_cursor = connection.cursor()
-    #
-    #     delivery_contract_reload = select_cursor.execute(
-    #             """
-    #                 select pk, external_id, item, crew_size, destination
-    #                 from delivery_contract
-    #                 where
-    #                   pk = ( ? )
-    #                 ;
-    #             """
-    #             , [self.pk]
-    #         ).fetchone()
-    #     self._external_id = delivery_contract_reload[1]
-    #     self._item = delivery_contract_reload[2]
-    #     self._crew_size = delivery_contract_reload[3]
-    #     self._destination = delivery_contract_reload[4]
