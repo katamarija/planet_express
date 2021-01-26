@@ -6,6 +6,10 @@ class BaseDB(abc.ABC):
     def __init__(self):
         self._pk = None
 
+    @property
+    def pk(self):
+        return self._pk
+
     def reload(self, cursor=None):
         if cursor:
             select_cursor = cursor
@@ -35,13 +39,14 @@ class BaseDB(abc.ABC):
             connection = sqlite3.connect("test.db")
             save_cursor = connection.cursor()
 
-        set_statements = ",".join([f"{key} = ( ? )" for key in self._model_attributes().keys() ])
         values = [getattr(self, attrname) for attrname in self._model_attributes().values()]
+
         # a = [1, 2, 3, 4]
         # [i * 2 for i in a] => [2, 4, 6, 8]
         # [ transformation for item_variable in list/dict/enumerable]
 
         if self._pk:
+            set_statements = ",".join([f"{key} = ( ? )" for key in self._model_attributes().keys() ])
             save_cursor.execute(
                     f"""
                         update { self._table_name() }
@@ -54,16 +59,18 @@ class BaseDB(abc.ABC):
                     , [*values, self.pk]
             )
         else:
+            column_names = ",".join(self._model_attributes().keys())
             save_cursor.execute(
                     f"""
                         insert into { self._table_name() } (
-                          name
+                          { column_names }
                         )
                         values
-                        ( ? )
+                        ( {",".join(["?"] * len(values))} )
                         ;
+
                     """
-                    , [self.name]
+                    , values
             )
 
             self._pk = save_cursor.execute("SELECT last_insert_rowid();").fetchone()[0]
