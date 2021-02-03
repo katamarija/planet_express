@@ -39,3 +39,18 @@ class DeliveryContract(BaseDB):
     @property
     def crew_conditions(self):
         return self._crew_conditions
+
+    @classmethod
+    def create_from_api_response(cls, api_response, cursor=None):
+        external_id = api_response["id"]
+        item = api_response["item"]
+        crew_size = api_response["crew_requirements"]["size"]
+        crew_conditions = api_response["crew_requirements"]["conditions"]
+        destination = api_response["destination"]
+
+        delivery_contract = cls(external_id, item, crew_size, crew_conditions, destination)
+        delivery_contract.save(cursor)
+        return delivery_contract
+
+    ### NEXT TIME
+    # new class, the one that talks to API
