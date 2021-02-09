@@ -51,6 +51,3 @@ class DeliveryContract(BaseDB):
         delivery_contract = cls(external_id, item, crew_size, crew_conditions, destination)
         delivery_contract.save(cursor)
         return delivery_contract
-
-    ### NEXT TIME
-    # new class, the one that talks to API
