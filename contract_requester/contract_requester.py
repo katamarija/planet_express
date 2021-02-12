@@ -1,4 +1,5 @@
 import requests
+from delivery_contract.delivery_contract import DeliveryContract
 
 class ContractRequester:
     # method that exists on blueprint of class, not an instance
@@ -9,5 +10,7 @@ class ContractRequester:
         data = r.json()
         return data
 
-    # stubs or mocks next time!!
-    # contract object save and into DB
+    @classmethod
+    def retrieve_and_save_contract_to_db(cls, cursor=None):
+        api_response = ContractRequester.get_api_response()
+        DeliveryContract.create_from_api_response(api_response, cursor)
