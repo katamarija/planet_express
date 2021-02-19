@@ -1,7 +1,7 @@
 from base_db import BaseDB
 
-class DeliveryContract(BaseDB):
 
+class DeliveryContract(BaseDB):
     def __init__(self, external_id, item, crew_size, crew_conditions, destination):
         super().__init__()
         self._external_id = external_id
@@ -11,10 +11,15 @@ class DeliveryContract(BaseDB):
         self._destination = destination
 
     def _table_name(self):
-        return 'delivery_contract'
+        return "delivery_contract"
 
     def _model_attributes(self):
-        return {'external_id':'_external_id', 'item':'_item', 'crew_size':'_crew_size', 'destination':'_destination'}
+        return {
+            "external_id": "_external_id",
+            "item": "_item",
+            "crew_size": "_crew_size",
+            "destination": "_destination",
+        }
 
     @property
     def item(self):
@@ -48,6 +53,8 @@ class DeliveryContract(BaseDB):
         crew_conditions = api_response["crew_requirements"]["conditions"]
         destination = api_response["destination"]
 
-        delivery_contract = cls(external_id, item, crew_size, crew_conditions, destination)
+        delivery_contract = cls(
+            external_id, item, crew_size, crew_conditions, destination
+        )
         delivery_contract.save(cursor)
         return delivery_contract

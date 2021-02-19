@@ -1,8 +1,8 @@
 import abc
 import sqlite3
 
-class BaseDB(abc.ABC):
 
+class BaseDB(abc.ABC):
     def __init__(self):
         self._pk = None
 
@@ -18,19 +18,18 @@ class BaseDB(abc.ABC):
             select_cursor = connection.cursor()
 
         reload_row = select_cursor.execute(
-                f"""
+            f"""
                     select
                       { ",".join(self._model_attributes().keys()) }
                     from { self._table_name() }
                     where
                       pk = ( ? )
                       ;
-                """
-                , [self.pk]
-            ).fetchone()
+                """,
+            [self.pk],
+        ).fetchone()
         for index, value in enumerate(self._model_attributes().values()):
             setattr(self, value, reload_row[index])
-
 
     def save(self, cursor=None):
         if cursor:
@@ -39,29 +38,33 @@ class BaseDB(abc.ABC):
             connection = sqlite3.connect("test.db")
             save_cursor = connection.cursor()
 
-        values = [getattr(self, attrname) for attrname in self._model_attributes().values()]
+        values = [
+            getattr(self, attrname) for attrname in self._model_attributes().values()
+        ]
 
         # a = [1, 2, 3, 4]
         # [i * 2 for i in a] => [2, 4, 6, 8]
         # [ transformation for item_variable in list/dict/enumerable]
 
         if self._pk:
-            set_statements = ",".join([f"{key} = ( ? )" for key in self._model_attributes().keys() ])
+            set_statements = ",".join(
+                [f"{key} = ( ? )" for key in self._model_attributes().keys()]
+            )
             save_cursor.execute(
-                    f"""
+                f"""
                         update { self._table_name() }
                         set
                           { set_statements }
                         where
                           pk = ( ? )
                         ;
-                    """
-                    , [*values, self.pk]
+                    """,
+                [*values, self.pk],
             )
         else:
             column_names = ",".join(self._model_attributes().keys())
             save_cursor.execute(
-                    f"""
+                f"""
                         insert into { self._table_name() } (
                           { column_names }
                         )
@@ -69,20 +72,17 @@ class BaseDB(abc.ABC):
                         ( {",".join(["?"] * len(values))} )
                         ;
 
-                    """
-                    , values
+                    """,
+                values,
             )
 
             self._pk = save_cursor.execute("SELECT last_insert_rowid();").fetchone()[0]
         if not cursor:
             connection.commit()
 
-
-
     @abc.abstractmethod
     def _table_name(self):
         raise
-
 
     @abc.abstractmethod
     def _model_attributes(self):
