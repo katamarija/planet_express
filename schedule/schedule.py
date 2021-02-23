@@ -1,4 +1,5 @@
 from delivery_contract.delivery_contract import DeliveryContract
+from crew.crew_member import CrewMember
 
 
 class Schedule:
@@ -14,10 +15,8 @@ class Schedule:
     def crew(self):
         return self._crew
 
-
-    def assign_crew(self):
-        # contract.crew_size
-        # crewmembers
-        # self._crew =
-        # Get number of crew needed from contract, then assign the crew from DB to the schedule,
-        # Need to be the crewmembers, not just a number!
+    def assign_crew(self, cursor=None):
+        crew_size = self._contract.crew_size
+        crew_members = CrewMember.get_crew_members_from_db(crew_size, cursor)
+        # conditions but ignore for now
+        self._crew = crew_members

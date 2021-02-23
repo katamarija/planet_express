@@ -20,3 +20,24 @@ class CrewMember(BaseDB):
     @name.setter
     def name(self, name):
         self._name = name
+
+    @classmethod
+    def get_crew_members_from_db(cls, quantity, cursor=None):
+        crew_members = []
+        crew_member_rows = cursor.execute(
+            """
+                select pk, name
+                from crew_member
+                limit ? ;
+            """,
+            [quantity],
+        ).fetchall()
+
+        for row in crew_member_rows:
+            pk = row[0]
+            name = row[1]
+            crew_member = cls(name)
+            crew_member._pk = pk
+            crew_members.append(crew_member)
+
+        return crew_members
