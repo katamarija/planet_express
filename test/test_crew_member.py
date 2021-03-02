@@ -10,9 +10,7 @@ def test_init_crew_member():
     assert crew_member.name == "Fry"
 
 
-def test_save_new_crew_member():
-    connection = sqlite3.connect("test.db")
-    cursor = connection.cursor()
+def test_save_new_crew_member(cursor):
     crew_member = CrewMember(name="Fry")
     crew_member.save(cursor)
 
@@ -31,9 +29,7 @@ def test_save_new_crew_member():
     assert crew_member_rows[0][1] == "Fry"
 
 
-def test_save_update_crew_member():
-    connection = sqlite3.connect("test.db")
-    cursor = connection.cursor()
+def test_save_update_crew_member(cursor):
     crew_member = CrewMember(name="Fry")
     crew_member.save(cursor)
     # this is only changing the python version of the object
@@ -52,9 +48,7 @@ def test_save_update_crew_member():
     assert crew_member_rows[0][1] == "Philip J. Fry"
 
 
-def test_reload_crew_member():
-    connection = sqlite3.connect("test.db")
-    cursor = connection.cursor()
+def test_reload_crew_member(cursor):
     crew_member = CrewMember(name="Philip J. Fry")
     crew_member.save(cursor)
     crew_member.name = "Fry"

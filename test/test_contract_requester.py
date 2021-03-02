@@ -13,9 +13,7 @@ def test_performs_successful_get_to_endpoint():
     # could add assertion / alert if the dictionary has additional key/values
 
 
-def test_retrieve_and_save_contract_to_db():
-    connection = sqlite3.connect("test.db")
-    cursor = connection.cursor()
+def test_retrieve_and_save_contract_to_db(cursor):
     ContractRequester.retrieve_and_save_contract_to_db(cursor)
 
     delivery_contract_rows = cursor.execute(
@@ -26,4 +24,3 @@ def test_retrieve_and_save_contract_to_db():
     ).fetchall()
 
     assert len(delivery_contract_rows) == 1
-    connection.rollback()

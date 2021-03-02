@@ -32,9 +32,7 @@ def test_init_delivery_contract():
     assert delivery_contract.destination == "Test Destination"
 
 
-def test_save_new_delivery_contract():
-    connection = sqlite3.connect("test.db")
-    cursor = connection.cursor()
+def test_save_new_delivery_contract(cursor):
     # instance of class DeliveryContract
     delivery_contract = DeliveryContract(
         external_id=123,
@@ -65,9 +63,7 @@ def test_save_new_delivery_contract():
     assert delivery_contract_rows[0][4] == "Test Destination"
 
 
-def test_save_update_delivery_contract():
-    connection = sqlite3.connect("test.db")
-    cursor = connection.cursor()
+def test_save_update_delivery_contract(cursor):
     delivery_contract = DeliveryContract(
         external_id=123,
         item="Test Item",
@@ -91,9 +87,7 @@ def test_save_update_delivery_contract():
     assert delivery_contract_rows[0][2] == "Testing Item"
 
 
-def test_reload_delivery_contract():
-    connection = sqlite3.connect("test.db")
-    cursor = connection.cursor()
+def test_reload_delivery_contract(cursor):
     delivery_contract = DeliveryContract(
         external_id=123,
         item="Test Item",
@@ -109,9 +103,7 @@ def test_reload_delivery_contract():
     assert delivery_contract.item == "Test Item"
 
 
-def test_new_delivery_contract_via_api_response(contract_api_response):
-    connection = sqlite3.connect("test.db")
-    cursor = connection.cursor()
+def test_new_delivery_contract_via_api_response(cursor, contract_api_response):
     delivery_contract = DeliveryContract.create_from_api_response(
         contract_api_response, cursor
     )

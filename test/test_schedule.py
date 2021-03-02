@@ -6,14 +6,7 @@ from crew.crew_member import CrewMember
 from schedule.schedule import Schedule
 
 
-def test_init_schedule():
-    connection = sqlite3.connect("test.db")
-    cursor = connection.cursor()
-
-    # We need a test crew member in DB
-    CrewMember(name="Fry").save(cursor)
-    CrewMember(name="Leela").save(cursor)
-
+def test_init_schedule(cursor, fry, leela):
     delivery_contract = DeliveryContract(
         external_id=123,
         item="Test Item",
@@ -30,8 +23,5 @@ def test_init_schedule():
     assert isinstance(schedule.crew[0], CrewMember)
     assert isinstance(schedule.crew[1], CrewMember)
 
-    # expand into python testing and clean up
-    # shared fixtures
-    # specifically cursor
     # track schedule assignments, Fry is not on every delivery
     # future schedules - when can you schedule them again if currently unavail
