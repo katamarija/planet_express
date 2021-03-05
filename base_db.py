@@ -46,7 +46,7 @@ class BaseDB(abc.ABC):
         # [i * 2 for i in a] => [2, 4, 6, 8]
         # [ transformation for item_variable in list/dict/enumerable]
 
-        if self._pk:
+        if self._pk and values != []:
             set_statements = ",".join(
                 [f"{key} = ( ? )" for key in self._model_attributes().keys()]
             )
@@ -61,24 +61,52 @@ class BaseDB(abc.ABC):
                     """,
                 [*values, self.pk],
             )
-        else:
+        elif not self._pk and values != []:
             column_names = ",".join(self._model_attributes().keys())
             save_cursor.execute(
                 f"""
-                        insert into { self._table_name() } (
-                          { column_names }
-                        )
-                        values
-                        ( {",".join(["?"] * len(values))} )
-                        ;
-
-                    """,
+                    insert into { self._table_name() } (
+                      { column_names }
+                    )
+                    values
+                    ( {",".join(["?"] * len(values))} );
+                """,
                 values,
             )
 
             self._pk = save_cursor.execute("SELECT last_insert_rowid();").fetchone()[0]
+        elif not self._pk and values == []:
+            save_cursor.execute(
+                f"""
+                    insert into { self._table_name() } default values ;
+                """
+            )
+
+            self._pk = save_cursor.execute("SELECT last_insert_rowid();").fetchone()[0]
+        else:
+            pass
         if not cursor:
             connection.commit()
+
+    def save_association(self, fk_column_name, other_pk, cursor=None):
+        if cursor:
+            save_cursor = cursor
+        else:
+            connection = sqlite3.connect("test.db")
+            save_cursor = connection.cursor()
+
+        save_cursor.execute(
+            f"""
+                update { self._table_name() }
+                set
+                  { fk_column_name } = ( ? )
+                where
+                  pk = ( ? )
+                ;
+            """,
+            [other_pk, self.pk],
+        )
+
 
     @abc.abstractmethod
     def _table_name(self):

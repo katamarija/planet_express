@@ -23,5 +23,27 @@ def test_init_schedule(cursor, fry, leela):
     assert isinstance(schedule.crew[0], CrewMember)
     assert isinstance(schedule.crew[1], CrewMember)
 
-    # track schedule assignments, Fry is not on every delivery
-    # future schedules - when can you schedule them again if currently unavail
+def test_schedule_without_crew_saved(cursor, fry, leela):
+    delivery_contract = DeliveryContract(
+        external_id=123,
+        item="Test Item",
+        crew_size=2,
+        crew_conditions=["Condition 1"],
+        destination="Test Destination",
+    )
+    delivery_contract.save(cursor)
+    schedule = Schedule(delivery_contract)
+    # schedule.assign_crew(cursor)
+    schedule.save(cursor)
+
+    assert type(schedule.pk) is int
+    schedule_rows = cursor.execute(
+        """
+            select pk, contract_fk
+            from schedule;
+        """
+    ).fetchall()
+
+    assert len(schedule_rows) == 1
+    assert type(schedule_rows[0][0]) is int
+    assert schedule_rows[0][1] == delivery_contract.pk

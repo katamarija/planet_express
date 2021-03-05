@@ -24,4 +24,13 @@ save_cursor.execute(
     """
 )
 
+save_cursor.execute(
+    """
+    create table if not exists schedule (
+      pk integer primary key not null
+      , contract_fk integer
+    );
+    """
+)
+
 connection.commit()
