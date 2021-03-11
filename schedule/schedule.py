@@ -32,4 +32,6 @@ class Schedule(BaseDB):
     def save(self, cursor=None):
         super().save(cursor)
         self.save_association("contract_fk", self._contract.pk, cursor)
-
+        # use in memory crew objects from assign_crew, get their pks and then insert into crew_assignment table
+        for crew in self.crew:
+            self.save_many_to_many_association("crew_assignment", ["schedule_fk", "crew_fk"], [self.pk, crew.pk], cursor)

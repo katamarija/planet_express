@@ -107,6 +107,22 @@ class BaseDB(abc.ABC):
             [other_pk, self.pk],
         )
 
+    def save_many_to_many_association(self, table_name, column_names, column_values, cursor=None):
+        if cursor:
+            save_cursor = cursor
+        else:
+            connection = sqlite3.connect("test.db")
+            save_cursor = connection.cursor()
+
+        save_cursor.execute(
+            f"""
+                insert into { table_name }
+                ( { ",".join(column_names) } )
+                values
+                ( {",".join(["?"] * len(column_values))} );
+            """,
+            column_values,
+        )
 
     @abc.abstractmethod
     def _table_name(self):

@@ -33,4 +33,12 @@ save_cursor.execute(
     """
 )
 
+save_cursor.execute(
+    """
+    create table if not exists crew_assignment(
+      crew_fk integer not null
+      , schedule_fk integer not null
+    );
+    """
+)
 connection.commit()

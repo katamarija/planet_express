@@ -23,7 +23,7 @@ def test_init_schedule(cursor, fry, leela):
     assert isinstance(schedule.crew[0], CrewMember)
     assert isinstance(schedule.crew[1], CrewMember)
 
-def test_schedule_without_crew_saved(cursor, fry, leela):
+def test_schedule_with_crew_saved(cursor, fry, leela):
     delivery_contract = DeliveryContract(
         external_id=123,
         item="Test Item",
@@ -33,7 +33,7 @@ def test_schedule_without_crew_saved(cursor, fry, leela):
     )
     delivery_contract.save(cursor)
     schedule = Schedule(delivery_contract)
-    # schedule.assign_crew(cursor)
+    schedule.assign_crew(cursor)
     schedule.save(cursor)
 
     assert type(schedule.pk) is int
@@ -47,3 +47,16 @@ def test_schedule_without_crew_saved(cursor, fry, leela):
     assert len(schedule_rows) == 1
     assert type(schedule_rows[0][0]) is int
     assert schedule_rows[0][1] == delivery_contract.pk
+    assert len(schedule.crew) == 2
+
+    crew_assignments = cursor.execute(
+        """
+            select crew_fk
+            from crew_assignment
+            where schedule_fk = ( ? )
+            order by crew_fk;
+        """, [schedule.pk],
+    ).fetchall()
+    crew_results = [result[0] for result in crew_assignments]
+
+    assert crew_results == sorted(crew.pk for crew in schedule.crew)
