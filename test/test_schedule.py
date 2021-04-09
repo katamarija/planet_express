@@ -1,3 +1,4 @@
+from datetime import datetime
 import pytest
 import sqlite3
 
@@ -22,6 +23,8 @@ def test_init_schedule(cursor, fry, leela):
     assert len(schedule.crew) == 2
     assert isinstance(schedule.crew[0], CrewMember)
     assert isinstance(schedule.crew[1], CrewMember)
+    assert type(schedule.delivery_date) is datetime
+
 
 def test_schedule_with_crew_saved(cursor, fry, leela):
     delivery_contract = DeliveryContract(
@@ -55,7 +58,8 @@ def test_schedule_with_crew_saved(cursor, fry, leela):
             from crew_assignment
             where schedule_fk = ( ? )
             order by crew_fk;
-        """, [schedule.pk],
+        """,
+        [schedule.pk],
     ).fetchall()
     crew_results = [result[0] for result in crew_assignments]
 

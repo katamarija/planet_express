@@ -1,3 +1,4 @@
+from datetime import datetime
 from base_db import BaseDB
 from delivery_contract.delivery_contract import DeliveryContract
 from crew.crew_member import CrewMember
@@ -8,6 +9,7 @@ class Schedule(BaseDB):
         super().__init__()
         self._contract = contract
         self._crew = []
+        self._delivery_date = datetime.utcnow()
 
     def _table_name(self):
         return "schedule"
@@ -23,6 +25,10 @@ class Schedule(BaseDB):
     def crew(self):
         return self._crew
 
+    @property
+    def delivery_date(self):
+        return self._delivery_date
+
     def assign_crew(self, cursor=None):
         crew_size = self._contract.crew_size
         crew_members = CrewMember.get_crew_members_from_db(crew_size, cursor)
@@ -34,4 +40,9 @@ class Schedule(BaseDB):
         self.save_association("contract_fk", self._contract.pk, cursor)
         # use in memory crew objects from assign_crew, get their pks and then insert into crew_assignment table
         for crew in self.crew:
-            self.save_many_to_many_association("crew_assignment", ["schedule_fk", "crew_fk"], [self.pk, crew.pk], cursor)
+            self.save_many_to_many_association(
+                "crew_assignment",
+                ["schedule_fk", "crew_fk"],
+                [self.pk, crew.pk],
+                cursor,
+            )
