@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 import pytest
 import sqlite3
 
@@ -13,7 +13,7 @@ def test_init_schedule(cursor, fry, leela):
         item="Test Item",
         crew_size=2,
         crew_conditions=["Condition 1"],
-        destination="Test Destination",
+        destination="mars",
     )
     schedule = Schedule(delivery_contract)
     schedule.assign_crew(cursor)
@@ -23,7 +23,8 @@ def test_init_schedule(cursor, fry, leela):
     assert len(schedule.crew) == 2
     assert isinstance(schedule.crew[0], CrewMember)
     assert isinstance(schedule.crew[1], CrewMember)
-    assert type(schedule.delivery_date) is datetime
+    assert type(schedule.delivery_date) is date
+    assert schedule.delivery_date.strftime('%d/%m/%Y') == '05/01/3000'
 
 
 def test_schedule_with_crew_saved(cursor, fry, leela):
@@ -32,7 +33,7 @@ def test_schedule_with_crew_saved(cursor, fry, leela):
         item="Test Item",
         crew_size=2,
         crew_conditions=["Condition 1"],
-        destination="Test Destination",
+        destination="the moon",
     )
     delivery_contract.save(cursor)
     schedule = Schedule(delivery_contract)

@@ -1,1 +1,2 @@
+pipenv install --dev
 pipenv run python script/init_db.py
