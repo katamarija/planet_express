@@ -1,1 +1,9 @@
-pipenv run pytest
+#!/bin/bash
+
+if [ -z "$1" ]; then
+  pipenv run pytest
+else
+  if [ -n "$1" ]; then
+    pipenv run pytest "$@"
+  fi
+fi

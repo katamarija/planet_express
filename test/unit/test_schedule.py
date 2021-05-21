@@ -2,21 +2,35 @@ from datetime import date
 import pytest
 import sqlite3
 
+from unittest.mock import MagicMock, patch
 from delivery_contract.delivery_contract import DeliveryContract
 from crew.crew_member import CrewMember
 from schedule.schedule import Schedule
 
 
 def test_init_schedule(cursor, fry, leela):
-    delivery_contract = DeliveryContract(
-        external_id=123,
-        item="Test Item",
-        crew_size=2,
-        crew_conditions=["Condition 1"],
-        destination="mars",
-    )
-    schedule = Schedule(delivery_contract)
-    schedule.assign_crew(cursor)
+    with patch(
+        "location_requester.location_requester.LocationRequester.get_api_response"
+    ) as mock_method:
+        delivery_contract = DeliveryContract(
+            external_id=123,
+            item="Test Item",
+            crew_size=2,
+            crew_conditions=["Condition 1"],
+            destination="mars",
+        )
+
+        def side_effect_func(location):
+            test_coords = {
+                "earth": {"coordinates": {"x": 0, "y": 0, "z": 0}},
+                "mars": {"coordinates": {"x": 2, "y": 2, "z": 3}},
+            }
+            return test_coords[location]
+
+        mock_method.side_effect = side_effect_func
+
+        schedule = Schedule(delivery_contract)
+        schedule.assign_crew(cursor)
 
     assert schedule.contract == delivery_contract
     assert type(schedule.crew) is list
@@ -24,19 +38,24 @@ def test_init_schedule(cursor, fry, leela):
     assert isinstance(schedule.crew[0], CrewMember)
     assert isinstance(schedule.crew[1], CrewMember)
     assert type(schedule.delivery_date) is date
-    assert schedule.delivery_date.strftime('%d/%m/%Y') == '05/01/3000'
+    assert schedule.delivery_date.strftime("%d/%m/%Y") == "05/01/3000"
 
 
 def test_schedule_with_crew_saved(cursor, fry, leela):
-    delivery_contract = DeliveryContract(
-        external_id=123,
-        item="Test Item",
-        crew_size=2,
-        crew_conditions=["Condition 1"],
-        destination="the moon",
-    )
-    delivery_contract.save(cursor)
-    schedule = Schedule(delivery_contract)
+    with patch(
+        "location_requester.location_requester.LocationRequester.get_api_response"
+    ) as mock_method:
+        delivery_contract = DeliveryContract(
+            external_id=123,
+            item="Test Item",
+            crew_size=2,
+            crew_conditions=["Condition 1"],
+            destination="the moon",
+        )
+
+        delivery_contract.save(cursor)
+        schedule = Schedule(delivery_contract)
+
     schedule.assign_crew(cursor)
     schedule.save(cursor)
 

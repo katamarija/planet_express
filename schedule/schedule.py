@@ -18,7 +18,6 @@ class Schedule(BaseDB):
         self._depart_date = self.DEFAULT_DEPART_DATE
         self._delivery_date = self._calculate_delivery_date()
 
-
     def _table_name(self):
         return "schedule"
 
@@ -26,10 +25,10 @@ class Schedule(BaseDB):
         return {}
 
     def _calculate_delivery_date(self):
-        '''
+        """
         return a date
         distance = sqrt((x1 - x2)**2 + (y1-y2)**2 + (z1 - z2)**2)
-        '''
+        """
         origin = self.DEFAULT_ORIGIN
         origin_coords = LocationRequester.get_api_response(origin)["coordinates"]
         x1 = origin_coords["x"]
@@ -37,16 +36,17 @@ class Schedule(BaseDB):
         z1 = origin_coords["z"]
 
         destination = self.contract.destination
-        destination_coords = LocationRequester.get_api_response(destination)["coordinates"]
+        destination_coords = LocationRequester.get_api_response(destination)[
+            "coordinates"
+        ]
         x2 = destination_coords["x"]
         y2 = destination_coords["y"]
         z2 = destination_coords["z"]
 
-        distance = math.sqrt((x1 - x2)**2 + (y1-y2)**2 + (z1 - z2)**2)
+        distance = math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2 + (z1 - z2) ** 2)
         speed = self.DEFAULT_SPEED
-        delivery_date = self._depart_date + datetime.timedelta(days = (distance/speed))
+        delivery_date = self._depart_date + datetime.timedelta(days=(distance / speed))
         return delivery_date
-
 
     @property
     def contract(self):
