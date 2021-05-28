@@ -16,15 +16,14 @@ def contract_api_response():
     }
 
 
-def test_init_delivery_contract():
-    delivery_contract = DeliveryContract(
-        external_id=123,
-        item="Test Item",
-        crew_size=1,
-        crew_conditions=["Condition 1"],
-        destination="Test Destination",
-    )
-
+def test_init_delivery_contract(delivery_contract):
+    # delivery_contract = DeliveryContract(
+    #     external_id=123,
+    #     item="Test Item",
+    #     crew_size=1,
+    #     crew_conditions=["Condition 1"],
+    #     destination="Test Destination",
+    # )
     assert delivery_contract.external_id == 123
     assert delivery_contract.item == "Test Item"
     assert delivery_contract.crew_size == 1
@@ -32,15 +31,15 @@ def test_init_delivery_contract():
     assert delivery_contract.destination == "Test Destination"
 
 
-def test_save_new_delivery_contract(cursor):
-    # instance of class DeliveryContract
-    delivery_contract = DeliveryContract(
-        external_id=123,
-        item="Test Item",
-        crew_size=1,
-        crew_conditions=["Condition 1"],
-        destination="Test Destination",
-    )
+def test_save_new_delivery_contract(delivery_contract, cursor):
+    # # instance of class DeliveryContract
+    # delivery_contract = DeliveryContract(
+    #     external_id=123,
+    #     item="Test Item",
+    #     crew_size=1,
+    #     crew_conditions=["Condition 1"],
+    #     destination="Test Destination",
+    # )
     # calling an instance method
     delivery_contract.save(cursor)
     # class method
@@ -63,14 +62,14 @@ def test_save_new_delivery_contract(cursor):
     assert delivery_contract_rows[0][4] == "Test Destination"
 
 
-def test_save_update_delivery_contract(cursor):
-    delivery_contract = DeliveryContract(
-        external_id=123,
-        item="Test Item",
-        crew_size=1,
-        crew_conditions=["Condition 1"],
-        destination="Test Destination",
-    )
+def test_save_update_delivery_contract(cursor, delivery_contract):
+    # delivery_contract = DeliveryContract(
+    #     external_id=123,
+    #     item="Test Item",
+    #     crew_size=1,
+    #     crew_conditions=["Condition 1"],
+    #     destination="Test Destination",
+    # )
     delivery_contract.save(cursor)
     delivery_contract.item = "Testing Item"
 
@@ -87,14 +86,14 @@ def test_save_update_delivery_contract(cursor):
     assert delivery_contract_rows[0][2] == "Testing Item"
 
 
-def test_reload_delivery_contract(cursor):
-    delivery_contract = DeliveryContract(
-        external_id=123,
-        item="Test Item",
-        crew_size=1,
-        crew_conditions=["Condition 1"],
-        destination="Test Destination",
-    )
+def test_reload_delivery_contract(cursor, delivery_contract):
+    # delivery_contract = DeliveryContract(
+    #     external_id=123,
+    #     item="Test Item",
+    #     crew_size=1,
+    #     crew_conditions=["Condition 1"],
+    #     destination="Test Destination",
+    # )
     delivery_contract.save(cursor)
     delivery_contract.item = "Testing Item"
 
