@@ -62,7 +62,7 @@ def test_schedule_with_crew_saved(cursor, fry, leela):
     assert type(schedule.pk) is int
     schedule_rows = cursor.execute(
         """
-            select pk, contract_fk
+            select pk, contract_fk, depart_date, delivery_date
             from schedule;
         """
     ).fetchall()
@@ -71,6 +71,8 @@ def test_schedule_with_crew_saved(cursor, fry, leela):
     assert type(schedule_rows[0][0]) is int
     assert schedule_rows[0][1] == delivery_contract.pk
     assert len(schedule.crew) == 2
+    assert schedule_rows[0][2] == "3000-01-01"
+    assert schedule_rows[0][3] == "3000-01-02"
 
     crew_assignments = cursor.execute(
         """

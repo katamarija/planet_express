@@ -1,10 +1,11 @@
 """
-Adding Location
-- new calculations of delivery time based on location coords
-- location attr for schedule
-  - starting and ending loc?
-- contract attr for schedule
-  - start and ending loc
-- open ? do we store the location info here or not?
+Situation:
+- 2 contracts come in at the same time
+- How to assign crew appropriately to each delivery
+
+Need to Know:
+- Indicator if crew member is available/busy
+- Actual begin or end dates for delivery 
+- How to schedule future deliveries
 
 """

@@ -22,7 +22,7 @@ class Schedule(BaseDB):
         return "schedule"
 
     def _model_attributes(self):
-        return {}
+        return {"depart_date": "_depart_date", "delivery_date": "_delivery_date"}
 
     def _calculate_delivery_date(self):
         """

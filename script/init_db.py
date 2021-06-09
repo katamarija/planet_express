@@ -29,6 +29,8 @@ save_cursor.execute(
     create table if not exists schedule (
       pk integer primary key not null
       , contract_fk integer
+      , depart_date text
+      , delivery_date text
     );
     """
 )
