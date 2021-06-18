@@ -62,7 +62,9 @@ class Schedule(BaseDB):
 
     def assign_crew(self, cursor=None):
         crew_size = self._contract.crew_size
-        crew_members = CrewMember.get_crew_members_from_db(crew_size, cursor)
+        crew_members = CrewMember.get_available_crew_member_from_db(
+            crew_size, self._depart_date, cursor
+        )
         # conditions but ignore for now
         self._crew = crew_members
 

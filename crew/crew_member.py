@@ -22,17 +22,23 @@ class CrewMember(BaseDB):
         self._name = name
 
     @classmethod
-    def get_crew_members_from_db(cls, quantity, cursor=None):
+    def get_available_crew_member_from_db(cls, quantity, depart_date_raw, cursor=None):
         crew_members = []
+        depart_date = depart_date_raw.strftime("%Y-%m-%d")
         crew_member_rows = cursor.execute(
             """
-                select pk, name
-                from crew_member
+                select
+                  c.pk, c.name
+                from
+                  crew_member c
+                left join crew_assignment ca on ca.crew_fk = c.pk
+                left join schedule s on s.pk = ca.schedule_fk
+                where
+                  s.delivery_date < ? or ca.crew_fk is null
                 limit ? ;
-            """,
-            [quantity],
+                """,
+            [depart_date, quantity],
         ).fetchall()
-
         for row in crew_member_rows:
             pk = row[0]
             name = row[1]
