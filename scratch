@@ -10,4 +10,27 @@ Need to Know:
 
 Migrate to Postgres
 
+
+
+If 2 crew:
+- one on assignment until 1/4
+- one on assignment until 1/5
+
+c3, 1/7
+c4, 1/8
+c1, 1/4 
+c2, 1/5
+
+I need 1!
+ 
+select pk from c
+
+
+min(dates) ====> c1
+
+we want crew member schedule max deliverydate that is closer to now
+
+limit 
+
+
 """

@@ -15,8 +15,8 @@ class Schedule(BaseDB):
         super().__init__()
         self._contract = contract
         self._crew = []
-        self._depart_date = self.DEFAULT_DEPART_DATE
-        self._delivery_date = self._calculate_delivery_date()
+        self._depart_date = None
+        self._delivery_date = None
 
     def _table_name(self):
         return "schedule"
@@ -57,16 +57,21 @@ class Schedule(BaseDB):
         return self._crew
 
     @property
+    def depart_date(self):
+        return self._depart_date
+
+    @property
     def delivery_date(self):
         return self._delivery_date
 
     def assign_crew(self, cursor=None):
         crew_size = self._contract.crew_size
-        crew_members = CrewMember.get_available_crew_member_from_db(
-            crew_size, self._depart_date, cursor
-        )
-        # conditions but ignore for now
+        crew_members = CrewMember.get_available_crew_member_from_db(crew_size, cursor)
         self._crew = crew_members
+
+
+        depart_date = the_date + 1
+
 
     def save(self, cursor=None):
         super().save(cursor)

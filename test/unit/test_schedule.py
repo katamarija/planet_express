@@ -71,6 +71,7 @@ def test_schedule_with_crew_saved(cursor, fry, leela):
     assert type(schedule_rows[0][0]) is int
     assert schedule_rows[0][1] == delivery_contract.pk
     assert len(schedule.crew) == 2
+
     assert schedule_rows[0][2] == "3000-01-01"
     assert schedule_rows[0][3] == "3000-01-02"
 
@@ -124,3 +125,44 @@ def test_assign_crew_to_simultaneous_contracts(cursor, fry, leela, zoidberg):
 
     assert schedule_moon.crew[0].pk != schedule_mars.crew[0].pk
     assert schedule_moon.crew[0].pk != schedule_mars.crew[1].pk
+
+
+def test_assign_crew_to_future_depart_date(cursor, fry):
+    with patch(
+        "location_requester.location_requester.LocationRequester.get_api_response"
+    ) as mock_method:
+        delivery_contract = DeliveryContract(
+            external_id=123,
+            item="Test Item 1",
+            crew_size=1,
+            crew_conditions=["Condition 1"],
+            destination="the moon",
+        )
+
+        delivery_contract.save(cursor)
+        schedule_moon = Schedule(delivery_contract)
+
+    with patch(
+        "location_requester.location_requester.LocationRequester.get_api_response"
+    ) as mock_method:
+        delivery_contract = DeliveryContract(
+            external_id=456,
+            item="Test Item 2",
+            crew_size=1,
+            crew_conditions=["Condition 2"],
+            destination="mars",
+        )
+
+        delivery_contract.save(cursor)
+        schedule_mars = Schedule(delivery_contract)
+
+    schedule_moon.assign_crew(cursor)
+    schedule_moon.save(cursor)
+    schedule_mars.assign_crew(cursor)
+    schedule_mars.save(cursor)
+
+    assert schedule_moon.depart_date.strftime("%d/%m/%Y") == "01/01/3000"
+    assert schedule_moon.delivery_date.strftime("%d/%m/%Y") == "02/01/3000"
+
+    assert schedule_mars.depart_date.strftime("%d/%m/%Y") == "03/01/3000"
+    assert schedule_mars.delivery_date.strftime("%d/%m/%Y") == "08/01/3000"
