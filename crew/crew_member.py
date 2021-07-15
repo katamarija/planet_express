@@ -1,5 +1,6 @@
 from base_db import BaseDB
 import sqlite3
+import datetime
 
 
 class CrewMember(BaseDB):
@@ -41,11 +42,17 @@ class CrewMember(BaseDB):
         for row in crew_member_rows:
             pk = row[0]
             name = row[1]
-            max_delivery_date = row[2]
 
             crew_member = cls(name)
             crew_member._pk = pk
-            #### SOMETHING HERE MAYBE PROBABLY
             crew_members.append(crew_member)
 
-        return crew_members
+        crew_available_dates = [
+            datetime.datetime.strptime(row[2], "%Y-%m-%d") if row[2] != None else None
+            for row in crew_member_rows
+        ]
+
+        available_dates_filtered = list(filter(None, crew_available_dates))
+        if len(available_dates_filtered) == 0:
+            return crew_members, None
+        return crew_members, max(available_dates_filtered)

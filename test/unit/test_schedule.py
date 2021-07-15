@@ -38,7 +38,7 @@ def test_init_schedule(cursor, fry, leela):
     assert isinstance(schedule.crew[0], CrewMember)
     assert isinstance(schedule.crew[1], CrewMember)
     assert type(schedule.delivery_date) is date
-    assert schedule.delivery_date.strftime("%d/%m/%Y") == "05/01/3000"
+    assert schedule.delivery_date.strftime("%d/%m/%Y") == "06/01/3000"
 
 
 def test_schedule_with_crew_saved(cursor, fry, leela):

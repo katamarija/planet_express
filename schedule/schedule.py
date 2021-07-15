@@ -24,7 +24,7 @@ class Schedule(BaseDB):
     def _model_attributes(self):
         return {"depart_date": "_depart_date", "delivery_date": "_delivery_date"}
 
-    def _calculate_delivery_date(self):
+    def _set_delivery_date(self):
         """
         return a date
         distance = sqrt((x1 - x2)**2 + (y1-y2)**2 + (z1 - z2)**2)
@@ -45,8 +45,9 @@ class Schedule(BaseDB):
 
         distance = math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2 + (z1 - z2) ** 2)
         speed = self.DEFAULT_SPEED
-        delivery_date = self._depart_date + datetime.timedelta(days=(distance / speed))
-        return delivery_date
+        self._delivery_date = self._depart_date + datetime.timedelta(
+            days=math.ceil(distance / speed)
+        )
 
     @property
     def contract(self):
@@ -66,12 +67,16 @@ class Schedule(BaseDB):
 
     def assign_crew(self, cursor=None):
         crew_size = self._contract.crew_size
-        crew_members = CrewMember.get_available_crew_member_from_db(crew_size, cursor)
+        crew_members, available_date = CrewMember.get_available_crew_member_from_db(
+            crew_size, cursor
+        )
         self._crew = crew_members
-
-
-        depart_date = the_date + 1
-
+        self._depart_date = (
+            self.DEFAULT_DEPART_DATE
+            if available_date == None
+            else available_date + datetime.timedelta(days=1)
+        )
+        self._set_delivery_date()
 
     def save(self, cursor=None):
         super().save(cursor)
