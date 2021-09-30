@@ -10,4 +10,22 @@ Need to Know:
 
 Migrate to Postgres
 
+
+
+
+Flask
+ - need a design before getting started
+ - end user, what happens behind the scenes, and what do THEY see
+ - I think it'd be cool to have both, but maybe do the internal first - we can play w fake package requests
+ - serve up the package requests, deal with scheduling, how many at a time, if close to certain planets?
+
+Infa-y stuff
+ - Migrate to Postgres
+ - will need a user and the DB
+
+Cleanup
+ - hardcoded ports and such, config for that
+
+Convert to Ruby-Rails project instead
+
 """
